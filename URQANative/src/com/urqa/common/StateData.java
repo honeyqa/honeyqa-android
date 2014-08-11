@@ -20,7 +20,7 @@ public class StateData {
 	public static boolean 	TransferLog 	= true;
 	public static String 	LogFilter 		= "";
 	
-	public static String	ServerAddress	= "http://ur-qa.com:49999/urqa/";
+	public static String	ServerAddress	= "http://ur-qa.com/urqa/";
 	
 
 }

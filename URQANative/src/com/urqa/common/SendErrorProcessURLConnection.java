@@ -65,59 +65,54 @@ public class SendErrorProcessURLConnection extends Thread {
 		try {
 
 			String idInstance = Long.toString(report.mId);
-
+			String access_url = StateData.ServerAddress + url;
 			HttpClient dumpclient = new DefaultHttpClient();
+			HttpPost dumppost = new HttpPost(access_url);
+			Log.i("UrQA",String.format(access_url));
 
-			HttpPost dumppost = new HttpPost(StateData.ServerAddress + url
-					+ "/dump/?dumpId=" + idInstance);
-			Log.i("UrQA",
-					String.format(StateData.ServerAddress + url
-							+ "/dump/?dumpId=" + idInstance));
-			// HttpPost dumppost = new
-			// HttpPost("www.ur-qa.com:49999/urqa/client/send/exception/native/dump/?dumpID="+idInstance);
-
-			dumpclient.getParams().setParameter(
-					"http.protocol.expect-continue", false);
-			dumpclient.getParams()
-					.setParameter("http.connection.timeout", 5000);
+			dumpclient.getParams().setParameter("http.protocol.expect-continue", false);
+			dumpclient.getParams().setParameter("http.connection.timeout", 5000);
 			dumpclient.getParams().setParameter("http.socket.timeout", 5000);
 
 			// 1. 파일의 내용을 body 로 설정함
 			String mergefile_name = filename + ".merge";
 			String DATA = setData(report);
-			// byte[] array = DATA.getBytes(Charset.forName("utf-8"));
 			byte[] json_ary = DATA.getBytes("utf-8");
-			int read_buf;
+			//byte[] read_buf = new byte[256];			
 			FileInputStream in = new FileInputStream(filename);
 			FileOutputStream out = new FileOutputStream(mergefile_name);
 
-			out.write((json_ary.length & 0xFF) >> 24);
-			out.write((json_ary.length & 0xFF) >> 18);
-			out.write((json_ary.length & 0xFF) >> 8);
-			out.write((json_ary.length & 0xFF));
-			out.write(json_ary);
+			out.write((json_ary.length >> 24) & 0xFF);
+			out.write((json_ary.length >> 16) & 0xFF);
+			out.write((json_ary.length >>  8) & 0xFF);
+			out.write((json_ary.length      ) & 0xFF);
+			out.write(json_ary);			
+			int read_buf;
 			while ((read_buf = in.read()) != -1) {
 				out.write(read_buf);
 			}
 			out.close();
 			in.close();
-			Log.i("UrQA",
-					String.format("UrQA NativeDump Path :: %s", mergefile_name));
-			File file = new File(mergefile_name);
-			FileEntity entity = new FileEntity(file, "binary/octet-stream");
+			//Log.i("UrQA",String.format("UrQA NativeDump Path :: %s", mergefile_name));
+			
+			File dmp_file = new File(filename);
+			dmp_file.delete();
+			
+			File merge_file = new File(mergefile_name);
+			FileEntity entity = new FileEntity(merge_file, "binary/octet-stream");
 			dumppost.setEntity(entity);
 
-			if (file.exists()) {
-				Log.d("URQATest", "File True");
+			if (merge_file.exists()) {
+				Log.d("URQANative", "Dump success");
 			}
 			HttpResponse response = dumpclient.execute(dumppost);
 			int code = response.getStatusLine().getStatusCode();
-			HttpEntity entity2 = response.getEntity();
-			String responseString = EntityUtils.toString(entity2, "UTF-8");
-			System.out.println(responseString);
-			Log.i("UrQA",
-					String.format("UrQA Response Code[NativeDump] :: %d", code));
-			// file.delete();
+			Log.i("UrQA",String.format("UrQA Response Code[NativeDump] :: %d", code));
+			//HttpEntity entity2 = response.getEntity();
+			//String responseString = EntityUtils.toString(entity2, "UTF-8");
+			//System.out.println(responseString);
+			
+			merge_file.delete();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
