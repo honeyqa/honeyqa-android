@@ -5,7 +5,7 @@ import android.content.Context;
 public class StateData {
 	
 	public static Context 	AppContext = null;
-	public static String 	SDKVersion = "0.96";  
+	public static String 	SDKVersion = "0.97";  
 	
 	public static String 	APIKEY = "";
 	

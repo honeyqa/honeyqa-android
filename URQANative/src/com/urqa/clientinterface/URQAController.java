@@ -64,13 +64,13 @@ public final class URQAController {
 
 			new UncaughtExceptionHandler();
 
-			request(context);
+			request(context, APIKEY);
 		}
 		EventPathManager.ClearEvent();
 		// StartActivity(context);
 	}
 
-	private static void request(Context context) {
+	private static void request(Context context, String apiKey) {
 		// Session 아이디 설정
 		class AuthenticationRequest extends Network {
 			@Override
@@ -89,10 +89,16 @@ public final class URQAController {
 				}
 			}
 		}
-
+		
 		Authentication authentication = new Authentication();
 		authentication.setKey(StateData.APIKEY);
 		authentication.setAppVersion(DeviceCollector.GetAppVersion(context));
+		authentication.setAndroidVersion(DeviceCollector.getVersionRelease());
+		authentication.setModel(DeviceCollector.getDeviceModel());
+		authentication.setManufacturer(DeviceCollector.getManufacturer());
+		authentication.setCountryCode(DeviceCollector.getCountry(context));
+		authentication.setDeviceId(DeviceCollector.getDeviceId(context, apiKey));
+		authentication.setCarrierName(DeviceCollector.getCarrierName(context));
 
 		AuthenticationRequest request = new AuthenticationRequest();
 		request.setNetwork(StateData.ServerAddress + "client/connect", authentication, Network.Method.POST);

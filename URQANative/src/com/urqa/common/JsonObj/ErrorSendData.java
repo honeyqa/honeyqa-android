@@ -48,6 +48,9 @@ public class ErrorSendData extends JsonObj implements JsonInterface {
 		tag = "";
 		rank = -1;
 		consoleLog = "";
+		
+		mDeviceId = "";
+		mCarrierName = "";
 	}
 
 	public String sdkversion;
@@ -175,6 +178,18 @@ public class ErrorSendData extends JsonObj implements JsonInterface {
 	 * 시스템 메모리가 부족한가 안부족한가
 	 */
 	public int sysmemlow;
+	
+	/**
+	 * 통신사
+	 */
+	 public String mCarrierName; 
+	 
+	 
+	 /**
+	  * id
+	  */
+	 
+	 public String mDeviceId;
 
 	/**
 	 * console log
@@ -230,6 +245,8 @@ public class ErrorSendData extends JsonObj implements JsonInterface {
             object.put("scrorientation", scrorientation);
             object.put("sysmemlow", sysmemlow);
             object.put("lastactivity", lastactivity);
+            object.put("carrier_name", mCarrierName);
+            object.put("device_id", mDeviceId);
             object.put("eventpaths", getEventPath());
 		} catch (JSONException e) {
 

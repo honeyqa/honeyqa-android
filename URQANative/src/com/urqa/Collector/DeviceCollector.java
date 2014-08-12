@@ -1,6 +1,8 @@
 package com.urqa.Collector;
 
 import java.io.File;
+import java.math.BigInteger;
+import java.util.List;
 import java.util.Locale;
 
 import android.content.Context;
@@ -9,10 +11,16 @@ import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.os.Environment;
 import android.os.StatFs;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
@@ -24,6 +32,135 @@ public class DeviceCollector {
 	public DeviceCollector(Context context) {
 		// TODO Auto-generated constructor stub
 		m_Context = context;
+
+	}
+
+    static public String getDeviceId(Context context, String apiKey) {
+        String a = new BigInteger(1, android.os.Build.MANUFACTURER.getBytes()).toString(16);
+        String b = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        String c = new BigInteger(1, android.os.Build.BRAND.getBytes()).toString(16);
+        String d = apiKey;
+        return String.format("%s-%s-%s-%s", nullToUnknown(a), nullToUnknown(b), nullToUnknown(c), nullToUnknown(d));
+    }
+    
+    
+    static private String nullToUnknown(String s) {
+    	if (s == null || "".equals(s))
+    		return "unknown";
+    	else 
+    		return s;
+    }
+
+
+	/**
+	 * 
+	 * @return 제조
+	 */
+	static public String getManufacturer() {
+		return android.os.Build.MANUFACTURER;
+	}
+
+	/**
+	 * 
+	 * @return 제조
+	 */
+	static public String getVersionRelease() {
+		return android.os.Build.VERSION.RELEASE;
+	}
+
+	/**
+	 * 
+	 * @return 디바이스 모델명
+	 */
+	static public String getDeviceModel() {
+		return android.os.Build.MODEL;
+	}
+
+	/**
+	 * 통신
+	 * 
+	 * @return
+	 */
+	static public String getCarrierName(Context context) {
+		try {
+			String name;
+			TelephonyManager manager = (TelephonyManager) context
+					.getSystemService(Context.TELEPHONY_SERVICE);
+			name = manager.getSimOperatorName();
+			if (name == null || "".equals(name)) {
+				name = manager.getNetworkOperatorName();
+				if (name == null || "".equals(name)) {
+					return "unknown";
+				}
+			}
+			return name;
+		} catch (Exception e) {
+			return "unknown";
+		}
+	}
+
+	static public String getCountry(Context context) {
+		String name = getCountryIso(context);
+		if ("".equals(name)) {
+			return "unknown";
+		} else {
+			return name;
+		}
+	}
+
+	static private Criteria getCriteria() {
+		Criteria criteria = new Criteria();
+		criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+		criteria.setAltitudeRequired(false);
+		criteria.setBearingRequired(false);
+		criteria.setCostAllowed(false);
+		criteria.setPowerRequirement(Criteria.POWER_LOW);
+		return criteria;
+	}
+
+	static private String getFromLocation(Context context, Location location) {
+		if (location == null) {
+			return "unknown";
+		} else {
+			Geocoder geocoder = new Geocoder(context, Locale.US);
+			String country = "";
+			try {
+				List<Address> list = geocoder.getFromLocation(
+						location.getLatitude(), location.getLongitude(), 3);
+				if (!list.isEmpty()) {
+					Address address = list.get(0);
+					country = address.getCountryCode();
+					if (country == null || "".equals(country)) {
+						return "unknown";
+					} else {
+						return country;
+					}
+				}
+
+				return "unknown";
+			} catch (Exception e) {
+				return "unknown";
+			}
+		}
+	}
+
+	static private String getCountryIso(Context context) {
+		try {
+			String name;
+			TelephonyManager manager = (TelephonyManager) context
+					.getSystemService(Context.TELEPHONY_SERVICE);
+			name = manager.getSimCountryIso();
+			if (name == null || "".equals(name)) {
+				name = manager.getNetworkCountryIso();
+				if (name == null || "".equals(name)) {
+					return "";
+				}
+			}
+			return name;
+		} catch (Exception e) {
+			return "";
+		}
 	}
 
 	static public int BytetoMegaByte(Long Byte) {
@@ -57,8 +194,8 @@ public class DeviceCollector {
 	}
 
 	static public String GetAppVersion(Context context) {
-		PackageManager packagemanager = context.getPackageManager();
 		try {
+			PackageManager packagemanager = context.getPackageManager();
 			PackageInfo packageinfo = packagemanager.getPackageInfo(
 					context.getPackageName(), 0);
 			return packageinfo.versionName;
