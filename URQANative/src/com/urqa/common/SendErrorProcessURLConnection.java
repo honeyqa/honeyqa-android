@@ -1,32 +1,22 @@
 package com.urqa.common;
 
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.urqa.Collector.ErrorReport;
-import com.urqa.common.JsonObj.IDInstance;
 
 public class SendErrorProcessURLConnection extends Thread {
 	private ErrorReport report;
@@ -62,7 +52,7 @@ public class SendErrorProcessURLConnection extends Thread {
 		 */
 
 		// dump 보내기
-		try {
+		/*try {
 
 			String idInstance = Long.toString(report.mId);
 			String access_url = StateData.ServerAddress + url;
@@ -115,6 +105,39 @@ public class SendErrorProcessURLConnection extends Thread {
 			merge_file.delete();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}*/
+		
+		try{
+			// # step 1 : init for reading
+			FileInputStream fis = new FileInputStream(filename);
+			File dmp_file = new File(filename);
+			byte[] byteArr = new byte[(int) dmp_file.length()];
+			System.out.println(filename);
+			// # step 2 : read file from image
+			fis.read(byteArr);			
+			fis.close();
+			// # step 3 : image to String using Base64
+			report.NativeData = Base64.encodeToString(byteArr,Base64.NO_WRAP);
+			dmp_file.delete();
+						
+			HttpClient client = new DefaultHttpClient();
+			setHttpParams(client.getParams());
+			
+			client.getParams().setParameter("http.protocol.expect-continue", false);
+			client.getParams().setParameter("http.connection.timeout", 5000);
+			client.getParams().setParameter("http.socket.timeout", 5000);
+			
+			HttpPost post = new HttpPost(StateData.ServerAddress + url);
+			Log.i("UrQA", String.format(StateData.ServerAddress + url));
+			post.setHeader("Content-Type", "application/json; charset=utf-8");			
+			post.setEntity(toEntity(report));
+			
+			HttpResponse response = client.execute(post); 
+			int code =	response.getStatusLine().getStatusCode(); Log.i("UrQA",
+			String.format("UrQA Response Code[Native] :: %d", code));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -124,9 +147,9 @@ public class SendErrorProcessURLConnection extends Thread {
 		params.setParameter("http.socket.timeout", 5000);
 	}
 
-	private StringEntity toEntity(ErrorReport data) throws JSONException,
-			IOException {
+	private StringEntity toEntity(ErrorReport data) throws JSONException, IOException {
 		final String DATA = setData(data);
+		System.out.println(DATA);
 		return new StringEntity(DATA, "UTF-8");
 	}
 
@@ -136,6 +159,7 @@ public class SendErrorProcessURLConnection extends Thread {
 		object.put("exception", data.ErrorData.toJSONObject());
 		object.put("instance", getId(data));
 		object.put("version", data.mUrQAVersion);
+		object.put("dump_data", data.NativeData);
 		return object.toString();
 	}
 

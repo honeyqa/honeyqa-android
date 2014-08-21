@@ -7,5 +7,6 @@ public class ErrorReport {
 	public String mUrQAVersion;
 	public ErrorSendData ErrorData;
 	public String 	LogData;
+	public String	NativeData;
 	
 }
