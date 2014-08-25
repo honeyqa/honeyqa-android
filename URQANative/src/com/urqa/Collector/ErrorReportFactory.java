@@ -36,7 +36,7 @@ public class ErrorReportFactory {
 		report.ErrorData = CreateNativeSendData(context);
 		report.LogData	 = LogCollector.getLog(context);
         report.mId = createId();
-        report.mUrQAVersion = StateData.SDKVersion;
+        report.mUrQAVersion = getUrQAVersion();
 		return report;
 	}
 
