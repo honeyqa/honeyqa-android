@@ -13,7 +13,6 @@ import java.util.TimeZone;
 
 public class ErrorReportFactory {
 
-
     public static ErrorReport CreateErrorReport(Throwable e, String tag, ErrorRank rank, Context context) {
         ErrorReport report = new ErrorReport();
         report.ErrorData = CreateSendData(e, tag, rank, context);
