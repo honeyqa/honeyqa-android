@@ -1,6 +1,9 @@
 package com.urqa.common;
 
-import java.util.concurrent.TimeoutException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -11,94 +14,139 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpParams;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
-
-import com.urqa.library.model.JsonInterface;
 
 public class Network extends Thread {
 
-	@Deprecated
-	public enum Networkformula {
-		GET, POST
-	}
+    public enum Method {
+        GET, POST
+    }
 
-	public enum Method {
-		GET, POST
-	}
+    private String url;
+    private String data;
+    private Method method;
+    private boolean isEncrypt;
+    private Handler handler;
 
-	private String mURL;
-	private JsonInterface mJson;
-	private Method mMethod;
+    public void setNetworkOption(String url, String data, Method method, boolean isEncrypt) {
+        this.url = url;
+        this.data = data;
+        this.method = method;
+        this.isEncrypt = isEncrypt;
+    }
 
-	public void setNetwork(String url, JsonInterface json, Method method) {
-		mURL = url;
-		mJson = json;
-		mMethod = method;
-	}
+    public void setHandler(Handler handler) {
+        this.handler = handler;
+    }
 
-	public void CallbackFunction(HttpResponse responseGet, HttpEntity resEntity) {
+    @Override
+    public void run() {
+        switch (method) {
+        case GET:
+            sendGetMethod();
+            break;
+        case POST:
+            sendPostMethod();
+            break;
+        }
+    }
 
-	}
+    private void sendGetMethod() {
+        try {
+            checkAssert();
+            HttpClient client = new DefaultHttpClient();
+            setHttpParams(client.getParams());
 
-	@Override
-	public void run() {
-		switch (mMethod) {
-		case GET:
-			GetSend();
-			break;
-		case POST:
-			PostSend();
-			break;
-		}
-	}
+            HttpGet get = new HttpGet(url);
+            HttpResponse responseGet = client.execute(get);
 
-	private void GetSend() {
-		try {
-			HttpClient client = new DefaultHttpClient();
-			setHttpParams(client.getParams());
+            if (handler != null) {
+                String response = convertResponseToString(responseGet);
+                Message msg = new Message();
+                msg.obj = response;
+                handler.sendMessage(msg);
+            }
 
-			HttpGet get = new HttpGet(mURL);
-			HttpResponse responseGet = client.execute(get);
-			HttpEntity resEntityGet = responseGet.getEntity();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-			if (resEntityGet != null) {
-				CallbackFunction(responseGet, resEntityGet);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    private void checkAssert() {
+        if (url == null || data == null || method == null)
+            throw new IllegalStateException("you might miss setNetworkOption method");
+    }
 
-	private void PostSend() {
-		try {
-			HttpClient client = new DefaultHttpClient();
-			setHttpParams(client.getParams());
+    private void sendPostMethod() {
+        try {
+            checkAssert();
+            HttpClient client = new DefaultHttpClient();
+            setHttpParams(client.getParams());
 
-			HttpPost post = new HttpPost(mURL);
+            HttpPost post = new HttpPost(url);
 
-			post.setHeader("Content-Type", "application/json; charset=utf-8");
+            post.setHeader("Content-Type", "application/json; charset=utf-8");
+            post.addHeader("version", "1.0.0");
 
-			String test = mJson.toJSONObject().toString();
-			StringEntity input = new StringEntity(test, "UTF-8");
+            if (isEncrypt && Encryptor.baseKey != null && Encryptor.token != null) {
+                post.addHeader("Urqa-Encrypt-Opt", "aes-256-cbc-pkcs5padding+base64");
+                data = Encryptor.encrypt(data);
+                Log.e(StateData.URQA_SDK_LOG, data);
+            }
 
-			post.setEntity(input);
-			HttpResponse responsePOST = client.execute(post);
-			HttpEntity resEntity = responsePOST.getEntity();
+            StringEntity input = new StringEntity(data, "UTF-8");
+            //Log.e("data in network", input.toString());
+            post.setEntity(input);
+            HttpResponse responsePOST = client.execute(post);
 
-			int code = responsePOST.getStatusLine().getStatusCode();
+            if (handler != null) {
+                String responseResult = convertResponseToString(responsePOST);
+                Message msg = new Message();
+                msg.obj = responseResult;
+                handler.sendMessage(msg);
+            }
 
-			Log.i("UrQA", String.format("UrQA Response Code : %d", code));
+            int code = responsePOST.getStatusLine().getStatusCode();
 
-			CallbackFunction(responsePOST, resEntity);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+            Log.e(StateData.URQA_SDK_LOG, String.format("UrQA Response Code : %d", code));
 
-	private void setHttpParams(HttpParams params) {
-		params.setParameter("http.protocol.expect-continue", false);
-		params.setParameter("http.connection.timeout", 5000);
-		params.setParameter("http.socket.timeout", 5000);
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String convertResponseToString(HttpResponse response) throws IllegalStateException,
+            IOException {
+
+        HttpEntity entity = response.getEntity();
+        InputStream is = entity.getContent();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+                sb.append((line + "\n"));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return sb.toString();
+    }
+
+    private void setHttpParams(HttpParams params) {
+        params.setParameter("http.protocol.expect-continue", false);
+        params.setParameter("http.connection.timeout", 5000);
+        params.setParameter("http.socket.timeout", 5000);
+    }
 
 }
