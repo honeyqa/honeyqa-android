@@ -5,7 +5,7 @@ import android.content.Context;
 public class StateData {
 	
 	public static Context 	AppContext = null;
-	public static String 	SDKVersion = "0.97";  
+	public static String 	SDKVersion = "0.98";  
 	
 	public static String 	APIKEY = "";
 	
@@ -21,6 +21,10 @@ public class StateData {
 	public static String 	LogFilter 		= "";
 	
 	public static String	ServerAddress	= "http://ur-qa.com/urqa/";
+	
+	public static final String URQA_SDK_LOG = "URQA Client";
+	
+	public static boolean isEncrypt;
 	
 
 }
