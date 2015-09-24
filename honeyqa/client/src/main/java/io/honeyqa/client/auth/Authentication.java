@@ -1,9 +1,11 @@
-package io.honeyqa.client.library.model;
+package io.honeyqa.client.auth;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Authentication implements JsonInterface {
+import io.honeyqa.client.json.JSONInterface;
+
+public class Authentication implements JSONInterface {
     private String mKey;
     private String mAppVersion;
     private String mDeviceId; // 아이디

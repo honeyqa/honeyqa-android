@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import io.honeyqa.client.common.CallStackData;
+import io.honeyqa.client.data.CallStackData;
 
 public class CallStackCollector {
 

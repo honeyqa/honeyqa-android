@@ -1,4 +1,4 @@
-package io.honeyqa.client.common;
+package io.honeyqa.client.auth;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -23,6 +23,8 @@ import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
 
+import io.honeyqa.client.network.Network;
+import io.honeyqa.client.network.NetworkResource;
 
 public class Encryptor {
 
@@ -41,7 +43,6 @@ public class Encryptor {
     public static final String ENC_DATA = "enc_data";
 
     public static void requestToken(final Context context) throws Exception {
-
         // Generate RSA key pairs
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(1024);
@@ -51,11 +52,9 @@ public class Encryptor {
         String public_key = "-----BEGIN PUBLIC KEY-----\\n"
                 + Base64.encodeToString(publicKey, Base64.NO_WRAP)
                 + "\\n-----END PUBLIC KEY-----\\n";
-
         // request Key
-        String url = HoneyQAData.ServerAddress + "client/get_key";
+        String url = NetworkResource.REQUEST_KEY_URL;
         String data = "{\"public\":\"" + public_key + "\"}";
-
         Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 try {
@@ -88,7 +87,6 @@ public class Encryptor {
                 }
             }
         };
-
         Network network = new Network();
         network.setNetworkOption(url, data, Network.Method.POST, false);
         network.setHandler(handler);
@@ -127,21 +125,16 @@ public class Encryptor {
     private static String encrypt(String baseKey, byte[] src)
             throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, InvalidAlgorithmParameterException {
-
         byte[] key = SHA256(baseKey);
-
         if (secureKey == null) {
             secureKey = new SecretKeySpec(key, "AES");
         }
-
         if (encryptor == null) {
             encryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
             encryptor.init(Cipher.ENCRYPT_MODE, secureKey, new IvParameterSpec(
                     IV.getBytes()));
         }
-
         byte[] encrypted = null;
-
         try {
             encrypted = encryptor.doFinal(src);
         } catch (IllegalBlockSizeException e) {
@@ -163,22 +156,17 @@ public class Encryptor {
     public byte[] decrypt(String baseKey, String src)
             throws NoSuchAlgorithmException, NoSuchPaddingException,
             InvalidKeyException, InvalidAlgorithmParameterException {
-
         byte[] key = SHA256(baseKey);
-
         if (secureKey == null) {
             secureKey = new SecretKeySpec(key, "AES");
         }
-
         if (decryptor == null) {
             decryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
             decryptor.init(Cipher.DECRYPT_MODE, secureKey, new IvParameterSpec(
                     IV.getBytes()));
         }
-
         byte[] dec = Base64.decode(src, 0);
         byte[] ret = null;
-
         try {
             ret = decryptor.doFinal(dec);
         } catch (IllegalBlockSizeException e) {
@@ -192,12 +180,10 @@ public class Encryptor {
 
     private static byte[] SHA256(String str) {
         try {
-
             MessageDigest sh = MessageDigest.getInstance("SHA-256");
             sh.update(str.getBytes());
             byte byteData[] = sh.digest();
             return byteData;
-
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }

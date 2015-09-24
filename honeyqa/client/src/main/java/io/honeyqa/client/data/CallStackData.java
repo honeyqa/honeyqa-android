@@ -1,4 +1,4 @@
-package io.honeyqa.client.common;
+package io.honeyqa.client.data;
 
 public class CallStackData {
     public String ActivityName;

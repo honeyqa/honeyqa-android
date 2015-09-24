@@ -1,4 +1,4 @@
-package io.honeyqa.client.common.JsonObj;
+package io.honeyqa.client.json;
 
 import java.util.List;
 
@@ -6,13 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.honeyqa.client.common.HoneyQAData;
+import io.honeyqa.client.data.HoneyQAData;
 import io.honeyqa.client.eventpath.EventPath;
-import io.honeyqa.client.library.model.JsonInterface;
+import io.honeyqa.client.json.JSONInterface;
 
 
-public class ErrorSendData extends JsonObj implements JsonInterface {
-    public ErrorSendData() {
+public class JSONErrorData implements JSONInterface {
+    public JSONErrorData() {
         // TODO Auto-generated constructor stub
         sdkversion = HoneyQAData.SDKVersion;
         locale = "";
@@ -200,16 +200,6 @@ public class ErrorSendData extends JsonObj implements JsonInterface {
     public String lastactivity;
 
     public List<EventPath> eventpaths;
-
-    @Override
-    public String toJson() {
-        return toJSONObject().toString();
-    }
-
-    @Override
-    public void fromJson(String JsonString) {
-
-    }
 
     @Override
     public JSONObject toJSONObject() {

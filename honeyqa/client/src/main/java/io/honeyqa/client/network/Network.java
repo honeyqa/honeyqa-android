@@ -1,4 +1,4 @@
-package io.honeyqa.client.common;
+package io.honeyqa.client.network;
 
 import java.util.concurrent.TimeUnit;
 
@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import io.honeyqa.client.auth.Encryptor;
+import io.honeyqa.client.data.HoneyQAData;
 import io.honeyqa.client.network.okhttp.MediaType;
 import io.honeyqa.client.network.okhttp.OkHttpClient;
 import io.honeyqa.client.network.okhttp.Request;
@@ -15,19 +17,44 @@ import io.honeyqa.client.network.okhttp.Response;
 
 public class Network extends Thread {
 
+    /**
+     * HTTP Method
+     * GET / POST
+     */
     public enum Method {
         GET, POST
     }
 
+    /**
+     * Media type for HTTP header
+     */
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
-    private String url;
-    private String data;
-    private Method method;
+    // Variables for communicate with server
     private boolean isEncrypt;
+    private Method method;
+    private String data, url;
     private Handler handler;
 
+    /**
+     * Check options (url / data / method)
+     *
+     * @throws IllegalStateException when url / data / method not set
+     */
+    private void checkAssert() {
+        if (url == null || data == null || method == null)
+            throw new IllegalStateException("you might miss setNetworkOption method");
+    }
+
+    /**
+     * Set network options
+     *
+     * @param url       API Server URL
+     * @param data
+     * @param method
+     * @param isEncrypt
+     */
     public void setNetworkOption(String url, String data, Method method, boolean isEncrypt) {
         this.url = url;
         this.data = data;
@@ -51,11 +78,6 @@ public class Network extends Thread {
         }
     }
 
-    private void checkAssert() {
-        if (url == null || data == null || method == null)
-            throw new IllegalStateException("you might miss setNetworkOption method");
-    }
-
     private void requestGet() {
         try {
             checkAssert();
@@ -64,14 +86,12 @@ public class Network extends Thread {
             Request request = new Request.Builder()
                     .url(url)
                     .build();
-
             Response response = client.newCall(request).execute();
             if (handler != null) {
                 Message msg = new Message();
                 msg.obj = response.body().string();
                 handler.sendMessage(msg);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

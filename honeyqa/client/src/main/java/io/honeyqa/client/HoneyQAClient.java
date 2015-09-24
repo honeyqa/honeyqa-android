@@ -1,27 +1,27 @@
 package io.honeyqa.client;
 
-import java.io.File;
-
-import org.json.JSONException;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import org.json.JSONException;
+
+import java.io.File;
+
+import io.honeyqa.client.auth.Authentication;
+import io.honeyqa.client.auth.Encryptor;
 import io.honeyqa.client.collector.DeviceCollector;
 import io.honeyqa.client.collector.ErrorReport;
 import io.honeyqa.client.collector.ErrorReportFactory;
-import io.honeyqa.client.common.Encryptor;
 import io.honeyqa.client.common.Sender;
-import io.honeyqa.client.common.HoneyQAData;
+import io.honeyqa.client.data.HoneyQAData;
 import io.honeyqa.client.eventpath.EventPathManager;
-import io.honeyqa.client.library.UncaughtExceptionHandler;
-import io.honeyqa.client.library.model.Authentication;
+import io.honeyqa.client.exception.UncaughtExceptionHandler;
+import io.honeyqa.client.network.NetworkResource;
 import io.honeyqa.client.rank.ErrorRank;
 
-
-public final class HoneyQAController {
+public final class HoneyQAClient {
 
     /**
      * Create breadcrumb for log tracing
@@ -43,8 +43,8 @@ public final class HoneyQAController {
      * @return int 0
      */
     public static int NativeCrashCallback(String fileName) {
-        ErrorReport report = ErrorReportFactory.CreateNativeErrorReport(HoneyQAData.AppContext);
-        Sender.sendExceptionWithNative(report, Sender.NATIVE_EXCEPTION_URL, fileName);
+        ErrorReport report = ErrorReportFactory.createNativeErrorReport(HoneyQAData.APP_CONTEXT);
+        Sender.sendExceptionWithNative(report, NetworkResource.NATIVE_EXCEPTION_URL, fileName);
         return 0;
     }
 
@@ -70,9 +70,9 @@ public final class HoneyQAController {
     // 세션 초기화 / 시작
     @SuppressLint("NewApi")
     public static void InitializeAndStartSession(Context context, String APIKEY) {
-        if (HoneyQAData.FirstConnect) {
-            HoneyQAData.AppContext = context;
-            HoneyQAData.FirstConnect = false;
+        if (HoneyQAData.FIRST_CONNECT) {
+            HoneyQAData.APP_CONTEXT = context;
+            HoneyQAData.FIRST_CONNECT = false;
             HoneyQAData.APIKEY = APIKEY;
             new UncaughtExceptionHandler();
             sendSession(context, APIKEY);
@@ -113,15 +113,15 @@ public final class HoneyQAController {
         authentication.setCountryCode(DeviceCollector.getCountry(context));
         authentication.setDeviceId(DeviceCollector.getDeviceId(context, apiKey));
         authentication.setCarrierName(DeviceCollector.getCarrierName(context));
-        Sender.sendSession(authentication, Sender.SESSION_URL);
+        Sender.sendSession(authentication, NetworkResource.SESSION_URL);
     }
 
     public static void SendException(Exception e, String Tag, ErrorRank rank) {
-        ErrorReport report = ErrorReportFactory.CreateErrorReport(e, Tag, rank,
-                HoneyQAData.AppContext);
+        ErrorReport report = ErrorReportFactory.createErrorReport(e, Tag, rank,
+                HoneyQAData.APP_CONTEXT);
 
         try {
-            Sender.sendException(report, Sender.EXCEPTION_URL);
+            Sender.sendException(report, NetworkResource.EXCEPTION_URL);
         } catch (JSONException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
@@ -242,7 +242,7 @@ public final class HoneyQAController {
     }
 
     private static String GetCachePath() {
-        File cachefile = HoneyQAData.AppContext.getCacheDir();
+        File cachefile = HoneyQAData.APP_CONTEXT.getCacheDir();
         return cachefile.getAbsolutePath();
     }
 

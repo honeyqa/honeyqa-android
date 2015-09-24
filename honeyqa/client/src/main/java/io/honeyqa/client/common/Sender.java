@@ -13,18 +13,13 @@ import android.util.Base64;
 import android.util.Log;
 
 import io.honeyqa.client.collector.ErrorReport;
-import io.honeyqa.client.library.model.Authentication;
-
+import io.honeyqa.client.auth.Authentication;
+import io.honeyqa.client.data.HoneyQAData;
+import io.honeyqa.client.network.Network;
 
 public class Sender {
 
-    public static final String EXCEPTION_URL = HoneyQAData.ServerAddress + "client/send/exception";
-    public static final String NATIVE_EXCEPTION_URL = HoneyQAData.ServerAddress
-            + "client/send/exception/native";
-    public static final String SESSION_URL = HoneyQAData.ServerAddress + "client/connect";
-
     public static void sendSession(Authentication auth, String url) {
-
         Network network = new Network();
         network.setNetworkOption(url, auth.toJSONObject().toString(), Network.Method.POST,
                 HoneyQAData.isEncrypt);
@@ -68,12 +63,9 @@ public class Sender {
             network.setNetworkOption(url, makeJsonStrForNative(report),
                     Network.Method.POST, HoneyQAData.isEncrypt);
             network.start();
-
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (JSONException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -88,7 +80,7 @@ public class Sender {
         object.put("console_log", getLog(data));
         object.put("exception", data.ErrorData.toJSONObject());
         object.put("instance", getId(data));
-        object.put("version", data.mUrQAVersion);
+        object.put("version", data.mHoneyQAVersion);
         return object.toString();
     }
 
@@ -103,7 +95,7 @@ public class Sender {
         object.put("console_log", getLog(data));
         object.put("exception", data.ErrorData.toJSONObject());
         object.put("instance", getId(data));
-        object.put("version", data.mUrQAVersion);
+        object.put("version", data.mHoneyQAVersion);
         object.put("dump_data", data.NativeData);
         return object.toString();
     }

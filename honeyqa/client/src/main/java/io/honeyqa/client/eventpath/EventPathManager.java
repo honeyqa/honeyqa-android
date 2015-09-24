@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.honeyqa.client.collector.DateCollector;
-import io.honeyqa.client.common.HoneyQAData;
+import io.honeyqa.client.data.HoneyQAData;
 
 /**
  * @author JeongSeungsu
@@ -23,7 +23,7 @@ public class EventPathManager {
     static synchronized public void CreateEventPath(int Step, String label) {
         StackTraceElement[] stackTrace = new Exception().getStackTrace();
 
-        EventPath eventpath = new EventPath(DateCollector.GetDateYYMMDDHHMMSS(HoneyQAData.AppContext),
+        EventPath eventpath = new EventPath(DateCollector.GetDateYYMMDDHHMMSS(HoneyQAData.APP_CONTEXT),
                 stackTrace[Step].getClassName(),
                 stackTrace[Step].getMethodName(),
                 label,

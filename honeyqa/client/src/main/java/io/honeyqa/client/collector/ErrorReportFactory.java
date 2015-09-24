@@ -5,30 +5,29 @@ import android.content.Context;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import io.honeyqa.client.common.CallStackData;
-import io.honeyqa.client.common.JsonObj.ErrorSendData;
-import io.honeyqa.client.common.HoneyQAData;
+import io.honeyqa.client.data.CallStackData;
+import io.honeyqa.client.json.JSONErrorData;
+import io.honeyqa.client.data.HoneyQAData;
 import io.honeyqa.client.eventpath.EventPathManager;
 import io.honeyqa.client.rank.ErrorRank;
 
 public class ErrorReportFactory {
 
-    public static ErrorReport CreateErrorReport(Throwable e, String tag, ErrorRank rank, Context context) {
+    public static ErrorReport createErrorReport(Throwable e, String tag, ErrorRank rank, Context context) {
         ErrorReport report = new ErrorReport();
-        report.ErrorData = CreateSendData(e, tag, rank, context);
+        report.ErrorData = createErrorData(e, tag, rank, context);
         report.LogData = LogCollector.getLog(context);
         report.mId = getId();
-        report.mUrQAVersion = getUrQAVersion();
+        report.mHoneyQAVersion = getHoneyQAVersion();
         return report;
     }
 
-
-    public static ErrorReport CreateNativeErrorReport(Context context) {
+    public static ErrorReport createNativeErrorReport(Context context) {
         ErrorReport report = new ErrorReport();
-        report.ErrorData = CreateNativeSendData(context);
+        report.ErrorData = createNativeErrorData(context);
         report.LogData = LogCollector.getLog(context);
         report.mId = getId();
-        report.mUrQAVersion = HoneyQAData.SDKVersion;
+        report.mHoneyQAVersion = getHoneyQAVersion();
         return report;
     }
 
@@ -37,13 +36,12 @@ public class ErrorReportFactory {
         return calendar.getTimeInMillis();
     }
 
-    private static String getUrQAVersion() {
+    private static String getHoneyQAVersion() {
         return HoneyQAData.SDKVersion;
     }
 
-    private static ErrorSendData CreateNativeSendData(Context context) {
-        ErrorSendData senddata = new ErrorSendData();
-
+    private static JSONErrorData createNativeErrorData(Context context) {
+        JSONErrorData senddata = new JSONErrorData();
         senddata.apikey = HoneyQAData.APIKEY;
         senddata.datetime = DateCollector.GetDateYYMMDDHHMMSS(context);
         senddata.device = DeviceCollector.getDeviceModel();
@@ -71,16 +69,13 @@ public class ErrorReportFactory {
         senddata.mCarrierName = DeviceCollector.getCarrierName(context);
         senddata.mDeviceId = DeviceCollector.getDeviceId(context, HoneyQAData.APIKEY);
         senddata.rank = ErrorRank.Native.value();
-
         return senddata;
     }
 
-    private static ErrorSendData CreateSendData(Throwable e, String tag, ErrorRank rank, Context context) {
-        ErrorSendData senddata = new ErrorSendData();
-
+    private static JSONErrorData createErrorData(Throwable e, String tag, ErrorRank rank, Context context) {
+        JSONErrorData senddata = new JSONErrorData();
         String CallStack = CallStackCollector.GetCallStack(e);
         CallStackData data = CallStackCollector.ParseStackTrace(e, CallStack);
-
         senddata.apikey = HoneyQAData.APIKEY;
         senddata.datetime = DateCollector.GetDateYYMMDDHHMMSS(context);
         senddata.device = DeviceCollector.getDeviceModel();
