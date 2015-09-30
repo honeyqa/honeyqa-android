@@ -1,4 +1,4 @@
-package io.honeyqa.client.common;
+package io.honeyqa.client.network;
 
 import java.io.File;
 import java.io.FileInputStream;

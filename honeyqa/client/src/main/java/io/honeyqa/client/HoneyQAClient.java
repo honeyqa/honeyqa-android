@@ -14,7 +14,7 @@ import io.honeyqa.client.auth.Encryptor;
 import io.honeyqa.client.collector.DeviceCollector;
 import io.honeyqa.client.collector.ErrorReport;
 import io.honeyqa.client.collector.ErrorReportFactory;
-import io.honeyqa.client.common.Sender;
+import io.honeyqa.client.network.Sender;
 import io.honeyqa.client.data.HoneyQAData;
 import io.honeyqa.client.eventpath.EventPathManager;
 import io.honeyqa.client.exception.UncaughtExceptionHandler;

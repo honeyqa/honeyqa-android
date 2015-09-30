@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import android.content.Context;
 
+import io.honeyqa.client.data.HoneyQAData;
+
 public class LogCollector {
 
     public final static String getLog(Context context) {
@@ -36,7 +38,7 @@ public class LogCollector {
             e.printStackTrace();
         }
 
-        int LogLineStart = LogList.size() - StateData.LogLine;
+        int LogLineStart = LogList.size() - HoneyQAData.LogLine;
         if (LogLineStart < 0)
             LogLineStart = 0;
 
