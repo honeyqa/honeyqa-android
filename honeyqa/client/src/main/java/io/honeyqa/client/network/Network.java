@@ -109,7 +109,7 @@ public class Network extends Thread {
                     .url(url)
                     .post(body);
             if (isEncrypt && Encryptor.baseKey != null && Encryptor.token != null) {
-                r.addHeader("Urqa-Encrypt-Opt", "aes-256-cbc-pkcs5padding+base64");
+                r.addHeader("HoneyQA-Encrypt-Opt", "aes-256-cbc-pkcs5padding+base64");
                 data = Encryptor.encrypt(data);
                 Log.e(HoneyQAData.HONEYQA_SDK_LOG, data);
             }
@@ -120,7 +120,7 @@ public class Network extends Thread {
                 handler.sendMessage(msg);
             }
             int statusCode = response.code();
-            Log.e(HoneyQAData.HONEYQA_SDK_LOG, String.format("HONEYQA Response Code : %d", statusCode));
+            Log.e(HoneyQAData.HONEYQA_SDK_LOG, String.format("HoneyQA Response Code : %d", statusCode));
         } catch (Exception e) {
             e.printStackTrace();
         }

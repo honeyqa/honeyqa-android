@@ -106,7 +106,7 @@ public final class HoneyQAClient {
     private static void sendSession(Context context, String apiKey) {
         Authentication authentication = new Authentication();
         authentication.setKey(HoneyQAData.APIKEY);
-        authentication.setAppVersion(DeviceCollector.GetAppVersion(context));
+        authentication.setAppVersion(DeviceCollector.getAppVersion(context));
         authentication.setAndroidVersion(DeviceCollector.getVersionRelease());
         authentication.setModel(DeviceCollector.getDeviceModel());
         authentication.setManufacturer(DeviceCollector.getManufacturer());

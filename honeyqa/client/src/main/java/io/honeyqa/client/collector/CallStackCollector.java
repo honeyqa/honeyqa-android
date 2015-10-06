@@ -12,11 +12,9 @@ public class CallStackCollector {
 	{
 	    Writer callstackwirter = new StringWriter();
         PrintWriter callstackprinter = new PrintWriter(callstackwirter);
-        
         Errorthrow.printStackTrace(callstackprinter);
         String CallStackString = callstackwirter.toString();
         callstackprinter.close();
-        
         return CallStackString; 
 	}
 	
@@ -25,7 +23,6 @@ public class CallStackCollector {
 	{
 		boolean RunTimeError = false;
 		CallStackData data = new CallStackData();
-		
         Throwable cause = errorThrow.getCause();
         if(cause != null)
             RunTimeError = true;
@@ -39,13 +36,10 @@ public class CallStackCollector {
         String [] errorname = callStackString.split("\n");
         data.ErrorName = errorname[0].toString(); 
         StackTraceElement[] ErrorElements = recordthrow.getStackTrace();
-        
         data.ClassName = ErrorElements[0].getClassName();
         data.Line = ErrorElements[0].getLineNumber();
-        
         String activityclass = SearchCallstackinActivity(ErrorElements);
         data.ActivityName = activityclass;
-               
         return data;
 	}
 	

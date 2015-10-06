@@ -4,7 +4,7 @@ package io.honeyqa.client.network;
  * Created by devholic on 15. 9. 23..
  */
 public class NetworkResource {
-    public static final String SERVER_URL = "http://ur-qa.com";
+    public static final String SERVER_URL = "http://honeyqa.io";
     public static final String EXCEPTION_URL = SERVER_URL + "/api/client/exception";
     public static final String NATIVE_EXCEPTION_URL = SERVER_URL
             + "/api/client/exception/native";

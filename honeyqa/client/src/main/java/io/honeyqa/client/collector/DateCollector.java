@@ -9,21 +9,13 @@ import java.util.TimeZone;
 import android.content.Context;
 
 public class DateCollector {
-	
-	public static String GetDateYYMMDDHHMMSS(Context context){
-		
-		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-	     Date currentLocalTime = cal.getTime();
-	     DateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");   
-	     date.setTimeZone(TimeZone.getTimeZone("UTC")); 
-	     String localTime = date.format(currentLocalTime); 
-	     return localTime;
-	     
-	     /*
-		java.util.Date currenttime = new java.util.Date();
-		SimpleDateFormat formatter = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss",  context.getResources( ).getConfiguration( ).locale);
-		String time = formatter.format(currenttime);
-		return time;
-		*/
-	}
+
+    public static String GetDateYYMMDDHHMMSS(Context context) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        Date currentLocalTime = cal.getTime();
+        DateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        date.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String localTime = date.format(currentLocalTime);
+        return localTime;
+    }
 }

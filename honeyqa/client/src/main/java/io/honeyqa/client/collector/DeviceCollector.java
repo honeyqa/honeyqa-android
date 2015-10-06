@@ -30,9 +30,7 @@ public class DeviceCollector {
 	Context m_Context;
 
 	public DeviceCollector(Context context) {
-		// TODO Auto-generated constructor stub
 		m_Context = context;
-
 	}
 
     static public String getDeviceId(Context context, String apiKey) {
@@ -54,33 +52,28 @@ public class DeviceCollector {
 
 
 	/**
-	 * 
-	 * @return 제조
+	 * @return Manufacturer
 	 */
 	static public String getManufacturer() {
 		return android.os.Build.MANUFACTURER;
 	}
 
 	/**
-	 * 
-	 * @return 제조
+	 * @return OS Version
 	 */
 	static public String getVersionRelease() {
 		return android.os.Build.VERSION.RELEASE;
 	}
 
 	/**
-	 * 
-	 * @return 디바이스 모델명
+	 * @return Device Model Name
 	 */
 	static public String getDeviceModel() {
 		return android.os.Build.MODEL;
 	}
 
 	/**
-	 * 통신
-	 * 
-	 * @return
+	 * @return Carrier
 	 */
 	static public String getCarrierName(Context context) {
 		try {
@@ -100,6 +93,9 @@ public class DeviceCollector {
 		}
 	}
 
+	/**
+	 * @return Country
+	 */
 	static public String getCountry(Context context) {
 		String name = getCountryIso(context);
 		if ("".equals(name)) {
@@ -137,7 +133,6 @@ public class DeviceCollector {
 						return country;
 					}
 				}
-
 				return "unknown";
 			} catch (Exception e) {
 				return "unknown";
@@ -168,7 +163,7 @@ public class DeviceCollector {
 		return (int) (kb / 1024);
 	}
 
-	static private boolean GetNetwork(Context context, int Type) {
+	static private boolean getNetwork(Context context, int Type) {
 		boolean use = false;
 		try {
 			PackageManager packagemanager = context.getPackageManager();
@@ -185,28 +180,27 @@ public class DeviceCollector {
 		return use;
 	}
 
-	static public boolean GetMobileNetwork(Context context) {
-		return GetNetwork(context, ConnectivityManager.TYPE_MOBILE);
+	static public boolean getMobileNetwork(Context context) {
+		return getNetwork(context, ConnectivityManager.TYPE_MOBILE);
 	}
 
-	static public boolean GetWiFiNetwork(Context context) {
-		return GetNetwork(context, ConnectivityManager.TYPE_WIFI);
+	static public boolean getWiFiNetwork(Context context) {
+		return getNetwork(context, ConnectivityManager.TYPE_WIFI);
 	}
 
-	static public String GetAppVersion(Context context) {
+	static public String getAppVersion(Context context) {
 		try {
 			PackageManager packagemanager = context.getPackageManager();
 			PackageInfo packageinfo = packagemanager.getPackageInfo(
 					context.getPackageName(), 0);
 			return packageinfo.versionName;
 		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "unknown";
 		}
 	}
 
-	static public int GetBatteryLevel(Context context) {
+	static public int getBatteryLevel(Context context) {
 		Intent bat = new Intent(); // 배터리 값을 받는 인텐트 변수
 		int batLevel = 0; // 인텐트에서 배터리 값을 받는다.
 		bat = context.registerReceiver(null, new IntentFilter(
@@ -223,7 +217,7 @@ public class DeviceCollector {
 	 * @param context
 	 * @return 나라코드가 제대로 안될시 Unknown반환 아니면 kr 같은 나라코드 반환
 	 */
-	static public String GetNational(Context context) {
+	static public String getNational(Context context) {
 		Locale nowlocale = context.getResources().getConfiguration().locale;
 		String isNull = "";
 		if (isNull.equals(nowlocale.getCountry()))
@@ -240,7 +234,7 @@ public class DeviceCollector {
 	 * @param context
 	 * @return true 사용중 false 면 비사용
 	 */
-	static public boolean GetGps(Context context) {
+	static public boolean getGps(Context context) {
 		PackageManager packagemanager = context.getPackageManager();
 		if (packagemanager.checkPermission(
 				"android.permission.ACCESS_FINE_LOCATION",
@@ -264,7 +258,7 @@ public class DeviceCollector {
 	 * @param context
 	 * @return 가로 스크린 크기
 	 */
-	static public int GetWidthScreenSize(Context context) {
+	static public int getWidthScreenSize(Context context) {
 		Display display = ((WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		return display.getWidth();
@@ -278,7 +272,7 @@ public class DeviceCollector {
 	 * @param context
 	 * @return 세로 스크린 크기
 	 */
-	static public int GetHeightScreenSize(Context context) {
+	static public int getHeightScreenSize(Context context) {
 		Display display = ((WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		return display.getHeight();
@@ -354,17 +348,17 @@ public class DeviceCollector {
 		return flag;
 	}
 
-	static public long GetTotalMemory() {
+	static public long getTotalMemory() {
 		long total = Runtime.getRuntime().totalMemory();
 		return total;
 	}
 
-	static public long GetFreeMemory() {
+	static public long getFreeMemory() {
 		long free = Runtime.getRuntime().freeMemory();
 		return free;
 	}
 
-	static public long GetMaxMemory() {
+	static public long getMaxMemory() {
 		long max = Runtime.getRuntime().maxMemory();
 		return max;
 	}
@@ -373,21 +367,21 @@ public class DeviceCollector {
 		return System.getProperty("os.version");
 	}
 
-	static public float GetXDPI(Context context) {
+	static public float getXDPI(Context context) {
 		DisplayMetrics metrics = new DisplayMetrics();
 		((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay().getMetrics(metrics);
 		return metrics.xdpi; // 해상도
 	}
 
-	static public float GetYDPI(Context context) {
+	static public float getYDPI(Context context) {
 		DisplayMetrics metrics = new DisplayMetrics();
 		((WindowManager) context.getSystemService(Context.WINDOW_SERVICE))
 				.getDefaultDisplay().getMetrics(metrics);
 		return metrics.ydpi; // 해상도
 	}
 
-	static public String GetLocale(Context context) {
+	static public String getLocale(Context context) {
 		return context.getResources().getConfiguration().locale
 				.getDisplayLanguage();
 	}
@@ -399,13 +393,13 @@ public class DeviceCollector {
 	 * @param context
 	 * @return 0 세로 1 가로
 	 */
-	static public int GetOrientation(Context context) {
+	static public int getOrientation(Context context) {
 		return ((WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay()
 				.getOrientation();
 	}
 
-	static public boolean GetSystemLowMemory() {
+	static public boolean getSystemLowMemory() {
 		android.app.ActivityManager.MemoryInfo memoryinfo = new android.app.ActivityManager.MemoryInfo();
 		return memoryinfo.lowMemory;
 	}
