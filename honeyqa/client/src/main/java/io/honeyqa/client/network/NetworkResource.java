@@ -5,9 +5,9 @@ package io.honeyqa.client.network;
  */
 public class NetworkResource {
     public static final String SERVER_URL = "http://api2.honeyqa.io";
-    public static final String EXCEPTION_URL = SERVER_URL + "/api/client/exception";
+    public static final String EXCEPTION_URL = SERVER_URL + "/api/v2/client/exception";
     public static final String NATIVE_EXCEPTION_URL = SERVER_URL
-            + "/api/client/exception/native";
-    public static final String SESSION_URL = SERVER_URL + "/api/client/session";
-    public static final String REQUEST_KEY_URL = SERVER_URL + "/api/client/key";
+            + "/api/v2/client/exception/native";
+    public static final String SESSION_URL = SERVER_URL + "/api/v2/client/session";
+    public static final String REQUEST_KEY_URL = SERVER_URL + "/api/v2/client/key";
 }
