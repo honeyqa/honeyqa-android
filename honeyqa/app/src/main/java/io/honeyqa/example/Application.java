@@ -10,7 +10,8 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        HoneyQAClient.InitializeAndStartSession(getApplicationContext(), "");
+        // [!] You should initialize HoneyQAClient in Application Class
+        // HoneyQAClient.InitializeAndStartSession(getApplicationContext(), "");
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/NanumBarunGothicUltraLight.ttf")
                 .setFontAttrId(R.attr.fontPath)

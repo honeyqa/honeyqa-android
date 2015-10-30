@@ -152,22 +152,44 @@
             android:text="honeyqa"
             android:textColor="#8A000000" />
 
-        <RelativeLayout
-            android:id="@+id/makeCrash"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
+        <LinearLayout
             android:layout_marginTop="8dp"
-            android:background="@drawable/btn_colored"
-            android:clickable="true">
+            android:layout_width="wrap_content"
+            android:layout_height="36dp">
 
-            <TextView
+            <RelativeLayout
+                android:id="@+id/updateKey"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_height="36dp"
+                android:background="@drawable/btn_colored"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="update API Key"
+                    android:textColor="#FFF" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/makeCrash"
+                android:layout_width="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:text="makeCrash"
-                android:textColor="#FFF" />
-        </RelativeLayout>
+                android:layout_height="36dp"
+                android:background="@drawable/btn_colored"
+                android:clickable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="makeCrash"
+                    android:textColor="#FFF" />
+            </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
