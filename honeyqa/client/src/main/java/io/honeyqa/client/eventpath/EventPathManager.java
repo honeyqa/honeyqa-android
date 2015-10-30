@@ -47,7 +47,7 @@ public class EventPathManager {
 
     static public List<EventPath> GetErrorEventPath() {
         List<EventPath> erroreventpaths = new ArrayList<EventPath>();
-
+        // MaxEventPath : 10
         int MaxCounter = ErrorEventPathsCounter;
         if (MaxCounter >= MaxEventPath)
             MaxCounter = MaxEventPath;

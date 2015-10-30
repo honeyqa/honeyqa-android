@@ -59,7 +59,7 @@ public class DeviceCollector {
 	}
 
 	/**
-	 * @return OS Version
+	 * @return OS HQ_Version
 	 */
 	static public String getVersionRelease() {
 		return android.os.Build.VERSION.RELEASE;
