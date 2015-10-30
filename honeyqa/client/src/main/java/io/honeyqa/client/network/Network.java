@@ -9,11 +9,11 @@ import android.util.Log;
 
 import io.honeyqa.client.auth.Encryptor;
 import io.honeyqa.client.data.HoneyQAData;
-import io.honeyqa.client.network.okhttp.MediaType;
-import io.honeyqa.client.network.okhttp.OkHttpClient;
-import io.honeyqa.client.network.okhttp.Request;
-import io.honeyqa.client.network.okhttp.RequestBody;
-import io.honeyqa.client.network.okhttp.Response;
+import io.honeyqa.client.network.okhttp.HQ_MediaType;
+import io.honeyqa.client.network.okhttp.HQ_OkHttpClient;
+import io.honeyqa.client.network.okhttp.HQ_Request;
+import io.honeyqa.client.network.okhttp.HQ_RequestBody;
+import io.honeyqa.client.network.okhttp.HQ_Response;
 
 public class Network extends Thread {
 
@@ -28,8 +28,8 @@ public class Network extends Thread {
     /**
      * Media type for HTTP header
      */
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
+    public static final HQ_MediaType JSON
+            = HQ_MediaType.parse("application/json; charset=utf-8");
 
     // Variables for communicate with server
     private boolean isEncrypt;
@@ -81,12 +81,12 @@ public class Network extends Thread {
     private void requestGet() {
         try {
             checkAssert();
-            OkHttpClient client = new OkHttpClient();
+            HQ_OkHttpClient client = new HQ_OkHttpClient();
             setTimeout(client);
-            Request request = new Request.Builder()
+            HQ_Request request = new HQ_Request.Builder()
                     .url(url)
                     .build();
-            Response response = client.newCall(request).execute();
+            HQ_Response response = client.newCall(request).execute();
             if (handler != null) {
                 Message msg = new Message();
                 msg.obj = response.body().string();
@@ -100,10 +100,10 @@ public class Network extends Thread {
     private void requestPost() {
         try {
             checkAssert();
-            OkHttpClient client = new OkHttpClient();
+            HQ_OkHttpClient client = new HQ_OkHttpClient();
             setTimeout(client);
-            RequestBody body = RequestBody.create(JSON, data);
-            Request.Builder r = new Request.Builder()
+            HQ_RequestBody body = HQ_RequestBody.create(JSON, data);
+            HQ_Request.Builder r = new HQ_Request.Builder()
                     .header("Content-Type", "application/json; charset=utf-8")
                     .addHeader("version", "1.0.0")
                     .url(url)
@@ -113,20 +113,20 @@ public class Network extends Thread {
                 data = Encryptor.encrypt(data);
                 Log.e(HoneyQAData.HONEYQA_SDK_LOG, data);
             }
-            Response response = client.newCall(r.build()).execute();
+            HQ_Response response = client.newCall(r.build()).execute();
             if (handler != null) {
                 Message msg = new Message();
                 msg.obj = response.body().string();
                 handler.sendMessage(msg);
             }
             int statusCode = response.code();
-            Log.e(HoneyQAData.HONEYQA_SDK_LOG, String.format("HoneyQA Response Code : %d", statusCode));
+            Log.e(HoneyQAData.HONEYQA_SDK_LOG, String.format("HoneyQA HQ_Response Code : %d", statusCode));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void setTimeout(OkHttpClient client) {
+    private void setTimeout(HQ_OkHttpClient client) {
         client.setConnectTimeout(5, TimeUnit.SECONDS);
         client.setReadTimeout(5, TimeUnit.SECONDS);
     }
